@@ -23,6 +23,10 @@ var margin = {top: 20, right: 90, bottom: 30, left: 90},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
+var i = 0,
+duration = 750,
+root;
+
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
@@ -34,9 +38,6 @@ var svg = d3
     .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-var i = 0,
-    duration = 750,
-    root;
 
 // declares a tree layout and assigns the size
 var treemap = d3.tree().size([height, width]);
@@ -44,8 +45,6 @@ var treemap = d3.tree().size([height, width]);
 // Assigns parent, children, height, depth
 root = d3.hierarchy(treeData, function(d) { return d.children; });
 
-console.log(root);
-//console.log(root);
 root.x0 = height / 2;
 root.y0 = 0;
 
