@@ -21,8 +21,8 @@ var treeData =
 
 // Set the dimensions and margins of the diagram
 var margin = {top: 20, right: 90, bottom: 30, left: 90},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = window.innerWidth - margin.left - margin.right,
+    height = window.innerHeight - margin.top - margin.bottom;
 var i = 0,
     duration = 750,
     root;
@@ -43,16 +43,16 @@ var svg1 = d3   // Separate to avoid zoom bad behavior
     .append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
+    .append('g')        // Solución para evitar que se panee a en el primer zoomEvent. Zoom se aplica en este <g>. En el siguiente se aplican los márgenes
+        .attr('class', "zoom");
 let svg = svg1
-    .append("g")
+    .append('g')
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
 // Add zoom
 // https://www.youtube.com/watch?v=ZNrG6sMNHeI
 let zoom = d3.zoom().scaleExtent([1, 10])
     .on('zoom', (e) => svg1.attr('transform', e.transform));
-
-// Add zoom.scaleExtent
 d3.select('#dendrogram').call(zoom);
 
 update(root);

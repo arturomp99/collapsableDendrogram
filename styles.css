@@ -1,3 +1,7 @@
+body {
+  overflow: hidden;
+}
+
 .node rect {
     fill: cornflower;
     stroke: cornflower;
