@@ -171,8 +171,7 @@ function update(source) {
     var linkEnter = link
         .enter()
         .insert('path', 'g')
-        .attr('fill', 'none')
-        .attr('stroke', 'black')
+        .attr('class', 'link')
         .attr('d', (d)=> {
             var o = {x:source.x0, y:source.y0};
             return diagonal(o,o);
