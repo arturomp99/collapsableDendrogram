@@ -1,3 +1,4 @@
+// Load data
 var treeData =
   {
     "name": "Event",
@@ -18,56 +19,47 @@ var treeData =
     ]
   };
 
-  // Set the dimensions and margins of the diagram
+// Set the dimensions and margins of the diagram
 var margin = {top: 20, right: 90, bottom: 30, left: 90},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
-
 var i = 0,
-duration = 750,
-root;
+    duration = 750,
+    root;
+
+// declares a tree layout and assigns the size
+var treemap = d3.tree().size([height, width]);
+// Assigns parent, children, height, depth
+root = d3.hierarchy(treeData, function(d) { return d.children; });
+root.x0 = height / 2;
+root.y0 = 0;
+root.children.forEach(collapse);    // Collapse after the second level
 
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
 var svg = d3    
-    .select("#dendogram")
+    .select("#dendrogram")
     .append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
     .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
+// Add zoom
+let zoom = d3.zoom().on('zoom', (d)=>{
+    console.log('ZOOM');    
+});
 
-// declares a tree layout and assigns the size
-var treemap = d3.tree().size([height, width]);
+svg.on('zoom', zoom);
 
-// Assigns parent, children, height, depth
-root = d3.hierarchy(treeData, function(d) { return d.children; });
-
-root.x0 = height / 2;
-root.y0 = 0;
-
-// Collapse after the second level
-root.children.forEach(collapse);
 update(root);
-
-// Collapse the node and all its children
-function collapse(d) {
-    if (d.children) {   // If it has children
-        d._children = d.children;   // Set them as collapsed
-        d.children.forEach(collapse);   // Check if the children have children of their own
-        d.children = null;
-    }
-}
 
 function update(source) {
     // Assigns the x and y positions for the nodes
     let treeData = treemap(root);
-
     // Compute the new tree layout
     let nodes = treeData.descendants(), links = treeData.descendants().slice(1);
-    
     // Normalize for fixed-depth
     nodes.forEach((d)=>{d.y = d.depth * 180});
 
@@ -76,16 +68,14 @@ function update(source) {
     // Update the nodes...
     var node = svg
         .selectAll('g.node')
-        .data(nodes, function(d) {
-            //console.log(d)
-            return d.id || (d.id = ++i); }); //here if d.id exists and is truthy, just return d.id; if not, then assign d.id to ++i
+        .data(nodes, (d) => d.id || (d.id = ++i)); // here, if d.id exists and is truthy, just return d.id; if not, then assign d.id to ++i
 
     // Enter any new nodes at the parent's previous position
     var nodeEnter = node
         .enter()
         .append('g')
         .attr('class', 'node')
-        .attr('transform', (d)=>{return `translate(${source.y0}, ${source.x0})`;})
+        .attr('transform', `translate(${source.y0}, ${source.x0})`)
         .on('click', click);
 
     // Add rect as node
@@ -96,26 +86,24 @@ function update(source) {
         .attr('height', 1e-6)
         .style('fill', (d)=>{return d._children ? 'lightsteelblue' : '#fff'; });
 
+    // Add icon
     var customSqr = d3.symbol().type(d3.symbolWye).size(100);
-
     nodeEnter
-        .append("path")
+        .append('path')
         .attr('class', 'node')
         .style("stroke", "#333")
         .style("fill", "#333")
         .attr("d", customSqr)
-   	    .attr("transform", function(d) {
-            return "translate(" + 95  + "," + 10  + ")";
-        });  
+   	    .attr("transform", "translate(95,10)"
+);  
 
     // Add labels for the nodes
     nodeEnter
         .append('text')
-        //.attr("dy", ".35em")
         .attr("x", (d)=> { return d.children || d._children ? -13 : 13; })
         .attr("y", (d)=> { return 14; })
-        .attr("text-anchor", (d)=> { return d.children || d._children ? "end" : "start"; })
-        .text(function(d) { return d.data.name; });
+        .attr("text-anchor", (d)=> { return d.children || d._children ? "end" : "start"; }) // Different anchor for leaf nodes
+        .text((d)=>d.data.name);
 
     // UPDATE
     var nodeUpdate = nodeEnter.merge(node);
@@ -222,4 +210,13 @@ function update(source) {
     update(d);
   }
     
+}
+
+// Collapse the node and all its children
+function collapse(d) {
+    if (d.children) {   // If it has children
+        d._children = d.children;   // Set them as collapsed
+        d.children.forEach(collapse);   // Check if the children have children of their own
+        d.children = null;
+    }
 }
