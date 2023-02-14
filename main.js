@@ -101,6 +101,7 @@ function update(source) {
 
     nodeEnter
         .append("path")
+        .attr('class', 'node')
         .style("stroke", "#333")
         .style("fill", "#333")
         .attr("d", customSqr)
@@ -125,13 +126,6 @@ function update(source) {
         .transition()
         .duration(duration)
         .attr("transform", (d)=> {  return `translate(${d.y}, ${d.x/1.05})`; });
-/*
-        // Update the node attributes and style
-    nodeUpdate
-        .select('circle.node')
-        .attr('r', 10)
-        .style("fill", (d)=> { return d._children ? "lightsteelblue" : "#fff"; })
-        .attr('cursor', 'pointer');*/
     
     nodeUpdate
         .select('rect.node')
@@ -152,7 +146,7 @@ function update(source) {
     
     // On exit reduce the node circles size to 0
     nodeExit
-        .select('rectangle')
+        .select('rect.node')
         .attr('width', 1e-6)
         .attr('height', 1e-6);
     
@@ -160,8 +154,64 @@ function update(source) {
     nodeExit
         .select('text')
         .style('fill-opacity', 1e-6);
+
+    // On exit reduce the opacity of text icon
+    nodeExit
+        .select('path.node')
+        .style('fill-opacity', 1e-6)
+        .style('stroke-opacity', 1e-6);
     
+
     // ****************** links section ***************************
+    // Update the links...
+    var link = svg.selectAll('path.link')
+        .data(links, (d)=>d.id);
+    
+    // Enter any new links at the parent's previous position
+    var linkEnter = link
+        .enter()
+        .insert('path', 'g')
+        .attr('fill', 'none')
+        .attr('stroke', 'black')
+        .attr('d', (d)=> {
+            var o = {x:source.x0, y:source.y0};
+            return diagonal(o,o);
+    });
+
+    // UPDATE
+    var linkUpdate = linkEnter.merge(link);
+
+    // Transition back to the parent element position
+    linkUpdate
+        .transition()
+        .duration(duration)
+        .attr('d', (d)=>diagonal(d, d.parent));
+
+    // Remove any existing links
+    var linkExit = link
+        .exit()
+        .transition()
+        .duration(duration)
+        .attr('d', (d)=> {
+            var o = {x: source.x, y: source.y};
+            return diagonal(o, o);
+        }).remove();
+
+    // Store the old positions for transition
+    nodes.forEach(function(d){
+        d.x0 = d.x;
+        d.y0 = d.y;
+    });
+
+    // Creates a curved (diagonal) path from parent to the child nodes
+    function diagonal(s, d) {
+        path = `M${s.y} ${s.x}
+                C ${(s.y + d.y) / 2} ${s.x},
+                ${(s.y + d.y) / 2} ${d.x},
+                ${d.y} ${d.x}`
+        return path;
+    }
+
     // Toggle children on click.
     function click(event, d) {
         if (d.children) {
