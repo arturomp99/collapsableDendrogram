@@ -1,42 +1,19 @@
 // TODO. create a minimap to allow navigation asuming that the dendrogram becomes really big
 // TODO. allow filtering to show filtered dendrograms
 
-// Load data
-var treeData =
-  {
-    "name": "Event",
-    "children": [
-      { 
-        "name": "Level 2: A",
-        "children": [
-          { "name": "Pos Outcome" },
-          { "name": "Neg outcome",
-        "children": [
-          { "name": "procedure" },
-          { "name": "alternative"},
-          { "name": "alternative2" }
-        ] }
-        ]
-      },
-      { "name": "Level 2: B" }
-    ]
-  };
-
 // Set the dimensions and margins of the diagram
 var margin = {top: 20, right: 90, bottom: 30, left: 90},
     width = window.innerWidth - margin.left - margin.right,
     height = window.innerHeight - margin.top - margin.bottom;
+
+// TWEAKABLES ----------------------------------------
+const jsonPath = "./data/data_2.json";
 var i = 0,
     duration = 750,
     root;
 
-// declares a tree layout and assigns the size
+// GENERIC -------------------------------------------
 var treemap = d3.tree().size([height, width]);
-// Assigns parent, children, height, depth
-root = d3.hierarchy(treeData, function(d) { return d.children; });
-root.x0 = height / 2;
-root.y0 = 0;
-root.children.forEach(collapse);    // Collapse after the second level
 
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
@@ -58,16 +35,20 @@ let zoom = d3.zoom().scaleExtent([1, 10])
     .on('zoom', (e) => svg1.attr('transform', e.transform));
 d3.select('#dendrogram').call(zoom);
 
-update(root);
+// Build an async main function ----------------------------
+const main = async()=> {                                                            // Read data
+    root = await d3.json(jsonPath, (data)=>d3.hierarchy(data, (d)=>d.children));    // Assigns parent, children, height, depth
+    root.x0 = height / 2;
+    root.y0 = 0;
+    root.children.forEach(collapse) // Collapse after the second level
+
+    update(root);
+}
 
 function update(source) {
-    // Assigns the x and y positions for the nodes
-    let treeData = treemap(root);
-    // Compute the new tree layout
-    let nodes = treeData.descendants(), links = treeData.descendants().slice(1);
-    // Normalize for fixed-depth
-    nodes.forEach((d)=>{d.y = d.depth * 180});
-
+    let treeData = treemap(root); // Assigns the x and y positions for the nodes
+    let nodes = treeData.descendants(), links = treeData.descendants().slice(1); // Compute the new tree layout
+    nodes.forEach((d)=>{d.y = d.depth * 180}); // Normalize for fixed-depth
 
     // ****************** Nodes section ***************************
     // Update the nodes...
@@ -225,3 +206,5 @@ function collapse(d) {
         d.children = null;
     }
 }
+
+main();
