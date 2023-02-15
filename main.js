@@ -7,7 +7,7 @@ var margin = {top: 20, right: 90, bottom: 30, left: 90},
     height = window.innerHeight - margin.top - margin.bottom;
 
 // TWEAKABLES ----------------------------------------
-const jsonPath = "./data/data_2.json";
+const jsonPath = "./data/data_countries.json";
 var i = 0,
     duration = 750,
     root;
@@ -36,8 +36,9 @@ let zoom = d3.zoom().scaleExtent([1, 10])
 d3.select('#dendrogram').call(zoom);
 
 // Build an async main function ----------------------------
-const main = async()=> {                                                            // Read data
-    root = await d3.json(jsonPath, (data)=>d3.hierarchy(data, (d)=>d.children));    // Assigns parent, children, height, depth
+const main = async()=> {
+    data = await d3.json(jsonPath)                  // Read data
+    root = d3.hierarchy(data, (d)=>d.children);     // Assigns parent, children, height, depth
     root.x0 = height / 2;
     root.y0 = 0;
     root.children.forEach(collapse) // Collapse after the second level
@@ -46,6 +47,7 @@ const main = async()=> {                                                        
 }
 
 function update(source) {
+    console.log(root);
     let treeData = treemap(root); // Assigns the x and y positions for the nodes
     let nodes = treeData.descendants(), links = treeData.descendants().slice(1); // Compute the new tree layout
     nodes.forEach((d)=>{d.y = d.depth * 180}); // Normalize for fixed-depth
@@ -89,7 +91,7 @@ function update(source) {
         .attr("x", (d)=> { return d.children || d._children ? -13 : 13; })
         .attr("y", (d)=> { return 14; })
         .attr("text-anchor", (d)=> { return d.children || d._children ? "end" : "start"; }) // Different anchor for leaf nodes
-        .text((d)=>d.data.name);
+        .text((d)=>  d.data.name || d.data.data.id);    // d.data.data.id es para los paises
 
     // UPDATE
     var nodeUpdate = nodeEnter.merge(node);
