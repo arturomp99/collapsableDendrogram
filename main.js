@@ -66,24 +66,12 @@ function update(source) {
         .attr('transform', `translate(${source.y0}, ${source.x0})`)
         .on('click', click);
 
-    // Add rect as node
+    // Add circle as node
     nodeEnter
-        .append('rect')
+        .append('circle')
         .attr('class', 'node')
-        .attr('width', 1e-6)
-        .attr('height', 1e-6)
-        .style('fill', (d)=>{return d._children ? 'lightsteelblue' : '#fff'; });
-
-    // Add icon
-    var customSqr = d3.symbol().type(d3.symbolWye).size(100);
-    nodeEnter
-        .append('path')
-        .attr('class', 'node')
-        .style("stroke", "#333")
-        .style("fill", "#333")
-        .attr("d", customSqr)
-   	    .attr("transform", "translate(95,10)"
-);  
+        .attr('r', 1e-6)
+        .style('fill', (d)=>{return d._children ? 'lightsteelblue' : '#fff'; });  
 
     // Add labels for the nodes
     nodeEnter
@@ -103,12 +91,11 @@ function update(source) {
         .attr("transform", (d)=> {  return `translate(${d.y}, ${d.x/1.05})`; });
     
     nodeUpdate
-        .select('rect.node')
-        .attr('width', 112)
-        .attr('height', 24)
-        .attr('rx', 12)
-        .attr('ry', 12)
-        .style('fill', (d)=>{return d._children ? 'lightsteelblue' : 'pink'; })
+        .select('circle.node')
+        .attr('r', (d)=>d._children ? 12 : 10)
+        .attr('cx', 12)
+        .attr('cy', 12)
+        .style('fill', (d)=>{return d._children ? 'cornflower' : 'black'; })
         .attr('cursor', 'pointer');
 
     // Remove any existing nodes

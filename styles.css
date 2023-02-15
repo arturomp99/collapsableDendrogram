@@ -2,9 +2,9 @@ body {
   overflow: hidden;
 }
 
-.node rect {
-    fill: cornflower;
-    stroke: cornflower;
+.node circle {
+    fill: black;
+    stroke: black;
     stroke-width: 3px;
     border-radius: 10px;
   }
