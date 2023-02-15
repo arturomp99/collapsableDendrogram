@@ -47,9 +47,10 @@ const main = async()=> {
 }
 
 function update(source) {
-    console.log(root);
+    console.log(source);
     let treeData = treemap(root); // Assigns the x and y positions for the nodes
-    let nodes = treeData.descendants(), links = treeData.descendants().slice(1); // Compute the new tree layout
+    let nodes = treeData.descendants(), 
+        links = treeData.descendants().slice(1); // Compute the new tree layout
     nodes.forEach((d)=>{d.y = d.depth * 180}); // Normalize for fixed-depth
 
     // ****************** Nodes section ***************************
@@ -70,8 +71,9 @@ function update(source) {
     nodeEnter
         .append('circle')
         .attr('class', 'node')
-        .attr('r', 1e-6)
-        .style('fill', (d)=>{return d._children ? 'lightsteelblue' : '#fff'; });  
+        .attr('cx', 12)
+        .attr('cy', 12)
+        .attr('r', 1e-6); 
 
     // Add labels for the nodes
     nodeEnter
@@ -90,13 +92,13 @@ function update(source) {
         .duration(duration)
         .attr("transform", (d)=> {  return `translate(${d.y}, ${d.x/1.05})`; });
     
+    // Transition for the circles
     nodeUpdate
-        .select('circle.node')
+        .selectAll('circle.node')
+        .transition()
+        .duration(duration)
         .attr('r', (d)=>d._children ? 12 : 10)
-        .attr('cx', 12)
-        .attr('cy', 12)
-        .style('fill', (d)=>{return d._children ? 'cornflower' : 'black'; })
-        .attr('cursor', 'pointer');
+        .style('fill', (d)=>d._children ? 'cornflower' : 'cornflower');
 
     // Remove any existing nodes
     var nodeExit = node
@@ -171,20 +173,20 @@ function update(source) {
                 ${(s.y + d.y) / 2} ${d.x},
                 ${d.y} ${d.x}`
         return path;
-    }
+    }    
+}
 
-    // Toggle children on click.
-    function click(event, d) {
-        if (d.children) {
-            d._children = d.children;
-            d.children = null;
-        } else {
-            d.children = d._children;
-            d._children = null;
-        }
-    update(d);
-  }
-    
+// Toggle children on click.
+function click(event, d) {
+    if (d.children) {
+        d._children = d.children;
+        d.children = null;
+    } else {
+        d.children = d._children;
+        d._children = null;
+    }
+console.log(d);
+update(d);
 }
 
 // Collapse the node and all its children
