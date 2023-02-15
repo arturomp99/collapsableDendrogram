@@ -1,0 +1,18 @@
+{
+    "name": "Event",
+    "children": [
+      { 
+        "name": "Level 2: A",
+        "children": [
+          { "name": "Pos Outcome" },
+          { "name": "Neg outcome",
+        "children": [
+          { "name": "procedure" },
+          { "name": "alternative"},
+          { "name": "alternative2" }
+        ] }
+        ]
+      },
+      { "name": "Level 2: B" }
+    ]
+  }

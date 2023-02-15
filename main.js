@@ -1,3 +1,6 @@
+// TODO. create a minimap to allow navigation asuming that the dendrogram becomes really big
+// TODO. allow filtering to show filtered dendrograms
+
 // Load data
 var treeData =
   {
