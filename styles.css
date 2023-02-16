@@ -13,7 +13,7 @@ body {
 }
 
 .node text {
-  font: 12px "HelveticaNeue", sans-serif;
+  font: "HelveticaNeue", sans-serif;
   user-select: none;
 }
   

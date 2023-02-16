@@ -1322,40 +1322,33 @@
       },
       {
           "data": {
-            "id": ""
+            "id": "Northern America"
         },
         "children": [
           {
             "data": {
-              "id": "Northern America"
-            },
-            "children": [
-              {
-                "data": {
-                  "id": "Bermuda"
-                }
-              },
-              {
-                "data": {
-                  "id": "Canada"
-                }
-              },
-              {
-                "data": {
-                  "id": "Greenland"
-                }
-              },
-              {
-                "data": {
-                  "id": "Saint Pierre and Miquelon"
-                }
-              },
-              {
-                "data": {
-                  "id": "United States of America"
-                }
-              }
-            ]
+              "id": "Bermuda"
+            }
+          },
+          {
+            "data": {
+              "id": "Canada"
+            }
+          },
+          {
+            "data": {
+              "id": "Greenland"
+            }
+          },
+          {
+            "data": {
+              "id": "Saint Pierre and Miquelon"
+            }
+          },
+          {
+            "data": {
+              "id": "United States of America"
+            }
           }
         ]
       }

@@ -11,7 +11,7 @@ const jsonPath = "./data/data_countries.json";
 var i = 0,
     duration = 750;
     r_1 = 12, r_2 = 10;
-
+const fontSize = d3.scaleLinear();
 // GENERIC -------------------------------------------
 var treemap = d3.tree().size([height, width]);
 var root;
@@ -43,17 +43,17 @@ const main = async()=> {
     root.y0 = 0;
     root.children.forEach(collapse) // Collapse after the second level
 
-    // // DATA PROCESSING
-    // const fontSize = d3
-    // .scaleLinear() // Used to transform data space to pixel space. DOMAIN: data space; RANGE: pixel space
-    // .domain(d3.extent(data, (d)=>d.depth))   // Finds both the min and the max
-    // .range([margin.left, width-margin.right]);
+    // DATA PROCESSING
+    fontSize
+        .domain(d3.extent(root.each((d)=>d.depth)))   // Finds both the min and the max
+        .range([18, 6]);
     
-    update(root);
+    console.log(d3.tree.nodes(root));
+    
+        update(root);
 }
 
 function update(source) {
-    console.log(source);
     let treeData = treemap(root); // Assigns the x and y positions for the nodes
     let nodes = treeData.descendants(), 
         links = treeData.descendants().slice(1); // Compute the new tree layout
@@ -88,6 +88,7 @@ function update(source) {
         .attr("x", (d)=> d._children || d.children ? -r_1*1.2 : r_1*1.2)
         .attr("y", -r_1*0.2)
         .attr("text-anchor", (d)=> d._children || d.children ? "end" : "start") // Different anchor for leaf nodes
+        .attr('font-size', d => fontSize(d.depth) + 'px')
         .text((d)=> d.data.name || d.data.data.id);    // d.data.data.id es para los paises
 
     // UPDATE
@@ -192,7 +193,6 @@ function click(event, d) {
         d.children = d._children;
         d._children = null;
     }
-console.log(d);
 update(d);
 }
 
