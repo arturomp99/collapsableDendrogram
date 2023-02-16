@@ -3,14 +3,13 @@ body {
 }
 
 .node circle {
-    fill: white;
     stroke: black;
     stroke-width: 3px;
     border-radius: 10px;
   }
   
 .node {
-  cursor: pointer
+  cursor: pointer;
 }
 
 .node text {
@@ -20,7 +19,7 @@ body {
   
 .link {
   fill: none;
-  stroke: #e0e0e0;
+  stroke: #756f6f;
   stroke-width: 3px;
   stroke-dasharray:5;
 }

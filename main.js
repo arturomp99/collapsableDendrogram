@@ -9,12 +9,12 @@ var margin = {top: 20, right: 90, bottom: 30, left: 90},
 // TWEAKABLES ----------------------------------------
 const jsonPath = "./data/data_countries.json";
 var i = 0,
-    duration = 750,
-    root;
+    duration = 750;
+    r_1 = 12, r_2 = 10;
 
 // GENERIC -------------------------------------------
 var treemap = d3.tree().size([height, width]);
-
+var root;
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
@@ -31,7 +31,7 @@ let svg = svg1
 
 // Add zoom
 // https://www.youtube.com/watch?v=ZNrG6sMNHeI
-let zoom = d3.zoom().scaleExtent([1, 10])
+let zoom = d3.zoom().scaleExtent([0.5, 10])
     .on('zoom', (e) => svg1.attr('transform', e.transform));
 d3.select('#dendrogram').call(zoom);
 
@@ -71,17 +71,18 @@ function update(source) {
     nodeEnter
         .append('circle')
         .attr('class', 'node')
-        .attr('cx', 12)
-        .attr('cy', 12)
-        .attr('r', 1e-6); 
+        .attr('cx', 0)
+        .attr('cy', 0)
+        .attr('r', 1e-6)
+        .style('fill', (d)=> d._children ? 'green' : 'white'); 
 
     // Add labels for the nodes
     nodeEnter
         .append('text')
-        .attr("x", (d)=> { return d.children || d._children ? -13 : 13; })
-        .attr("y", (d)=> { return 14; })
-        .attr("text-anchor", (d)=> { return d.children || d._children ? "end" : "start"; }) // Different anchor for leaf nodes
-        .text((d)=>  d.data.name || d.data.data.id);    // d.data.data.id es para los paises
+        .attr("x", (d)=> d._children ? r_1*1.2 : -r_1*1.2)
+        .attr("y", 0)
+        .attr("text-anchor", (d)=> d.children ? "end" : "start") // Different anchor for leaf nodes
+        .text((d)=> d.data.name || d.data.data.id);    // d.data.data.id es para los paises
 
     // UPDATE
     var nodeUpdate = nodeEnter.merge(node);
@@ -90,22 +91,30 @@ function update(source) {
     nodeUpdate
         .transition()
         .duration(duration)
-        .attr("transform", (d)=> {  return `translate(${d.y}, ${d.x/1.05})`; });
+        .attr("transform", (d)=> {  return `translate(${d.y}, ${d.x})`; });
     
     // Transition for the circles
     nodeUpdate
         .selectAll('circle.node')
         .transition()
         .duration(duration)
-        .attr('r', (d)=>d._children ? 12 : 10)
-        .style('fill', (d)=>d._children ? 'cornflower' : 'cornflower');
+        .attr('r', (d)=>d._children ? r_1 : r_2)
+        .style('fill', (d)=>d._children ? 'green' : 'white');
+
+    // Transition for the text
+    // nodeUpdate
+    //     .selectAll('text')
+    //     .transition()
+    //     .duration(duration)
+    //     .attr('x', (d)=>d. children ? -r_1*1.2 : r_1*1.2)
+    //     .attr('text-anchor', (d)=>d. children ? 'start' : 'end');
 
     // Remove any existing nodes
     var nodeExit = node
         .exit()
         .transition()
         .duration(duration)
-        .attr('transform', (d)=>{ return `translate(${source.y},${source.x})`; })
+        .attr('transform', (d)=>{ return `translate(${source.y},${source.x})`; })   // (y,x) y no (source.y0, source.x0) porque source puede ser que se mueva tambien, vamos a la nueva posicion de source
         .remove();
     
     // On exit reduce the node circles size to 0
