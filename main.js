@@ -43,6 +43,12 @@ const main = async()=> {
     root.y0 = 0;
     root.children.forEach(collapse) // Collapse after the second level
 
+    // // DATA PROCESSING
+    // const fontSize = d3
+    // .scaleLinear() // Used to transform data space to pixel space. DOMAIN: data space; RANGE: pixel space
+    // .domain(d3.extent(data, (d)=>d.depth))   // Finds both the min and the max
+    // .range([margin.left, width-margin.right]);
+    
     update(root);
 }
 
