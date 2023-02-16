@@ -79,9 +79,9 @@ function update(source) {
     // Add labels for the nodes
     nodeEnter
         .append('text')
-        .attr("x", (d)=> d._children && d.children ? r_1*1.2 : -r_1*1.2)
-        .attr("y", 0)
-        .attr("text-anchor", (d)=> d._children ? "start" : "end") // Different anchor for leaf nodes
+        .attr("x", (d)=> d._children || d.children ? -r_1*1.2 : r_1*1.2)
+        .attr("y", -r_1*0.2)
+        .attr("text-anchor", (d)=> d._children || d.children ? "end" : "start") // Different anchor for leaf nodes
         .text((d)=> d.data.name || d.data.data.id);    // d.data.data.id es para los paises
 
     // UPDATE
@@ -100,14 +100,6 @@ function update(source) {
         .duration(duration)
         .attr('r', (d)=>d._children ? r_1 : r_2)
         .style('fill', (d)=>d._children ? 'green' : 'white');
-
-    // Transition for the text
-    nodeUpdate
-        .selectAll('text')
-        .transition()
-        .duration(duration)
-        .attr('x', (d)=>d._children ? r_1*1.2 : -r_1*1.2)
-        .attr('text-anchor', (d)=>d._children ? 'start' : 'end');
 
     // Remove any existing nodes
     var nodeExit = node
