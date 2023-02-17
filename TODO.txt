@@ -1,0 +1,4 @@
+Mirar lo de d3.stratify para pasarle los datos desde d3.group()
+
+https://github.com/d3/d3-hierarchy#stratify
+https://github.com/d3/d3-hierarchyD

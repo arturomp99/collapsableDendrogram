@@ -13,7 +13,11 @@ var i = 0,
     r_1 = 12, r_2 = 10;
 const fontSize = d3.scaleLinear();
 // GENERIC -------------------------------------------
-var treemap = d3.tree().size([height, width]);
+var treemap = d3.tree()
+    .nodeSize([r_1, r_1])
+    .separation((a,b)=>a.parent == b.parent ? 1 + a.height + b.height : 1 + a.height + b.height + r_1*0.1);//.size([height, width]);
+
+
 var root;
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
@@ -27,7 +31,7 @@ var svg1 = d3   // Separate to avoid zoom bad behavior
         .attr('class', "zoom");
 let svg = svg1
     .append('g')
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        .attr("transform", `translate(${margin.left},${margin.top + height / 2})`);
 
 // Add zoom
 // https://www.youtube.com/watch?v=ZNrG6sMNHeI
@@ -43,14 +47,14 @@ const main = async()=> {
     root.y0 = 0;
     root.children.forEach(collapse) // Collapse after the second level
 
-    // DATA PROCESSING
+    // TODO: DATA PROCESSING
     fontSize
         .domain(d3.extent(root.each((d)=>d.depth)))   // Finds both the min and the max
         .range([18, 6]);
     
-    console.log(d3.tree.nodes(root));
+    //console.log(d3.tree.nodes(root));
     
-        update(root);
+    update(root);
 }
 
 function update(source) {
