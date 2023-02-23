@@ -7,7 +7,7 @@ var margin = {top: 20, right: 90, bottom: 30, left: 90},
     height = window.innerHeight - margin.top - margin.bottom;
 
 // TWEAKABLES ----------------------------------------
-const jsonPath = "./data/data_countries.json";
+const dataPath = "./data/CleanData_Boyaca.csv";
 var i = 0,
     duration = 750;
     r_1 = 12, r_2 = 10;
@@ -15,7 +15,7 @@ const fontSize = d3.scaleLinear();
 // GENERIC -------------------------------------------
 var treemap = d3.tree()
     .nodeSize([r_1, r_1])
-    .separation((a,b)=>a.parent == b.parent ? 1 + a.height + b.height : 1 + a.height + b.height + r_1*0.1);//.size([height, width]);
+    .separation((a,b)=>a.parent == b.parent ? 1.2 + (a.height + b.height)/2 : 1.2 + (a.height + b.height)/2 + r_1*0.1);//.size([height, width]);
 
 
 var root;
@@ -41,8 +41,23 @@ d3.select('#dendrogram').call(zoom);
 
 // Build an async main function ----------------------------
 const main = async()=> {
-    data = await d3.json(jsonPath)                  // Read data
-    root = d3.hierarchy(data, (d)=>d.children);     // Assigns parent, children, height, depth
+    if (dataPath.includes("csv")) {
+        data = await d3.csv(dataPath);
+
+        // Turn the array into a hierarchy
+        dataByTaxonomy = d3.group(data,
+                                d=>d.kingdom, 
+                                d=>d.phylum, 
+                                d=>d.class, 
+                                d=>d.order, 
+                                d=>d.family, 
+                                d=>d.genus); 
+        root = d3.hierarchy(dataByTaxonomy);
+    } else {
+        data = await d3.json(dataPath)                  // Read data
+        root = d3.hierarchy(data, (d)=>d.children);     // Assigns parent, children, height, depth
+    }
+    console.log(root);
     root.x0 = height / 2;
     root.y0 = 0;
     root.children.forEach(collapse) // Collapse after the second level
@@ -90,10 +105,10 @@ function update(source) {
     nodeEnter
         .append('text')
         .attr("x", (d)=> d._children || d.children ? -r_1*1.2 : r_1*1.2)
-        .attr("y", -r_1*0.2)
+        .attr("y", (d)=> d._children || d.children ? -r_1*0.2 : r_1*0.2)
         .attr("text-anchor", (d)=> d._children || d.children ? "end" : "start") // Different anchor for leaf nodes
         .attr('font-size', d => fontSize(d.depth) + 'px')
-        .text((d)=> d.data.name || d.data.data.id);    // d.data.data.id es para los paises
+        .text((d)=> d.name || d.data.name || d.data[0] || d.data.scientificName);// || d.data.data.id);    // d.data.data.id es para los paises
 
     // UPDATE
     var nodeUpdate = nodeEnter.merge(node);
