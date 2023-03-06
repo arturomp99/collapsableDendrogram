@@ -1,16 +1,20 @@
-// TODO. create a minimap to allow navigation asuming that the dendrogram becomes really big
-// TODO. allow filtering to show filtered dendrograms
-
 // Set the dimensions and margins of the diagram
 var margin = {top: 20, right: 90, bottom: 30, left: 90},
     width = window.innerWidth - margin.left - margin.right,
     height = window.innerHeight - margin.top - margin.bottom;
 
 
-// Set the expand all button
+// Set the expand all and collapse all buttons
 let expandAllBtn = document.getElementById('expandAllBtn');
 expandAllBtn.addEventListener("click", ()=> {
     expandLeaves(root);
+});
+let collapseAllBtn = document.getElementById('collapseAllBtn');
+collapseAllBtn.addEventListener("click", ()=> {
+    if (root.children) {
+        root.children.forEach(collapse);
+        update(root);
+    }
 });
 
 // TWEAKABLES ----------------------------------------
