@@ -12,14 +12,16 @@ expandAllBtn.addEventListener("click", ()=> {
 let collapseAllBtn = document.getElementById('collapseAllBtn');
 collapseAllBtn.addEventListener("click", ()=> {
     if (root.children) {
-        root.children.forEach(collapse);
-        update(root);
+        root.children.forEach((e)=>{
+            collapse(e);
+            update(e);
+        });
     }
 });
 
 // TWEAKABLES ----------------------------------------
 // const dataPath = "./data/CleanData_Boyaca.csv";
-const dataPath = "./data/data_countries.json";
+const dataPath = "./data/data_2.json";
 var i = 0,
     duration = 750;
     r_1 = 12, r_2 = 10;
@@ -247,7 +249,6 @@ function expandLeaves(r) {
 
 function expandAll(r) { // We suppose r has r._children and no r.children
     if (r._children) {
-        console.log(r);
         r.children = r._children;
         r._children = null;
         r.children.forEach((e)=>expandAll(e));
