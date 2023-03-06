@@ -9,9 +9,13 @@ var margin = {top: 20, right: 90, bottom: 30, left: 90},
 
 // Set the expand all button
 let expandAllBtn = document.getElementById('expandAllBtn');
-expandAllBtn.onclick = expandAll;
+expandAllBtn.addEventListener("click", ()=> {
+    expandAll(root);
+    update(root);
+});
 
 // TWEAKABLES ----------------------------------------
+// const dataPath = "./data/CleanData_Boyaca.csv";
 const dataPath = "./data/CleanData_Boyaca.csv";
 var i = 0,
     duration = 750;
@@ -229,8 +233,15 @@ function collapse(d) {
     }
 }
 
-function expandAll() {
-    console.log("EXPAND ALL!!!");
+function expandAll(r) {
+    if (r._children) {
+        r.children = r._children;
+        r._children = null;
+        expandAll(r.children);
+        r.children.forEach((e)=>expandAll(e));
+    } else if (r.children){
+        r.children.forEach((e)=>expandAll(e));
+    }
 }
 
 main();
