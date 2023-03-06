@@ -1,5 +1,10 @@
+// TODO. Expand all option. Instead of a expand all button, it is better to add an Expand all descendants from a certain node option.
 // TODO. create a minimap to allow navigation asuming that the dendrogram becomes really big
+// TODO. Highlight the path of descendants of a node when hovering and a text prompt of the descendants on top of the dendrogram 
 // TODO. allow filtering to show filtered dendrograms
+/* TODO. FIX BUGS
+*       BUG 1: If expanding while it is contracting, the names do not appear (click on a node fast twice (but not double click))
+*/
 
 // Set the dimensions and margins of the diagram
 var margin = {top: 20, right: 90, bottom: 30, left: 90},
