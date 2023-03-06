@@ -10,13 +10,12 @@ var margin = {top: 20, right: 90, bottom: 30, left: 90},
 // Set the expand all button
 let expandAllBtn = document.getElementById('expandAllBtn');
 expandAllBtn.addEventListener("click", ()=> {
-    expandAll(root);
-    update(root);
+    expandLeaves(root);
 });
 
 // TWEAKABLES ----------------------------------------
 // const dataPath = "./data/CleanData_Boyaca.csv";
-const dataPath = "./data/CleanData_Boyaca.csv";
+const dataPath = "./data/data_countries.json";
 var i = 0,
     duration = 750;
     r_1 = 12, r_2 = 10;
@@ -233,13 +232,20 @@ function collapse(d) {
     }
 }
 
-function expandAll(r) {
+function expandLeaves(r) {
     if (r._children) {
+        expandAll(r);
+        update(r);
+    } else if (r.children) {
+        r.children.forEach((e)=>expandLeaves(e));
+    }
+}
+
+function expandAll(r) { // We suppose r has r._children and no r.children
+    if (r._children) {
+        console.log(r);
         r.children = r._children;
         r._children = null;
-        expandAll(r.children);
-        r.children.forEach((e)=>expandAll(e));
-    } else if (r.children){
         r.children.forEach((e)=>expandAll(e));
     }
 }
