@@ -6,6 +6,11 @@ var margin = {top: 20, right: 90, bottom: 30, left: 90},
     width = window.innerWidth - margin.left - margin.right,
     height = window.innerHeight - margin.top - margin.bottom;
 
+
+// Set the expand all button
+let expandAllBtn = document.getElementById('expandAllBtn');
+expandAllBtn.onclick = expandAll;
+
 // TWEAKABLES ----------------------------------------
 const dataPath = "./data/CleanData_Boyaca.csv";
 var i = 0,
@@ -222,6 +227,10 @@ function collapse(d) {
         d.children.forEach(collapse);   // Check if the children have children of their own
         d.children = null;
     }
+}
+
+function expandAll() {
+    console.log("EXPAND ALL!!!");
 }
 
 main();

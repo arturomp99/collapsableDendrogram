@@ -7,14 +7,15 @@ body {
     stroke-width: 3px;
     border-radius: 10px;
   }
-  
-.node {
+
+.node circle {
   cursor: pointer;
 }
 
 .node text {
   font: "HelveticaNeue", sans-serif;
   user-select: none;
+  background-color: red !important;
 }
   
 .link {
