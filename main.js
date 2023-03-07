@@ -11,7 +11,24 @@ var margin = {top: 20, right: 90, bottom: 30, left: 90},
     width = window.innerWidth - margin.left - margin.right,
     height = window.innerHeight - margin.top - margin.bottom;
 
+
+// Set the expand all and collapse all buttons
+let expandAllBtn = document.getElementById('expandAllBtn');
+expandAllBtn.addEventListener("click", ()=> {
+    expandLeaves(root);
+});
+let collapseAllBtn = document.getElementById('collapseAllBtn');
+collapseAllBtn.addEventListener("click", ()=> {
+    if (root.children) {
+        root.children.forEach((e)=>{
+            collapse(e);
+            update(e);
+        });
+    }
+});
+
 // TWEAKABLES ----------------------------------------
+// const dataPath = "./data/CleanData_Boyaca.csv";
 const dataPath = "./data/CleanData_Boyaca.csv";
 var i = 0,
     duration = 750;
@@ -226,6 +243,23 @@ function collapse(d) {
         d._children = d.children;   // Set them as collapsed
         d.children.forEach(collapse);   // Check if the children have children of their own
         d.children = null;
+    }
+}
+
+function expandLeaves(r) {
+    if (r._children) {
+        expandAll(r);
+        update(r);
+    } else if (r.children) {
+        r.children.forEach((e)=>expandLeaves(e));
+    }
+}
+
+function expandAll(r) { // We suppose r has r._children and no r.children
+    if (r._children) {
+        r.children = r._children;
+        r._children = null;
+        r.children.forEach((e)=>expandAll(e));
     }
 }
 
