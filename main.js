@@ -30,6 +30,7 @@ collapseAllBtn.addEventListener("click", ()=> {
 // TWEAKABLES ----------------------------------------
 // const dataPath = "./data/CleanData_Boyaca.csv";
 const dataPath = "./data/CleanData_Boyaca.csv";
+var rawData, data;
 var i = 0,
     duration = 750;
     r_1 = 12, r_2 = 10;
@@ -64,7 +65,10 @@ d3.select('#dendrogram').call(zoom);
 // Build an async main function ----------------------------
 const main = async()=> {
     if (dataPath.includes("csv")) {
-        data = await d3.csv(dataPath);
+        rawData = await d3.csv(dataPath);
+
+        // FILTER: Only get that data which has 'Animalia'
+        data = rawData.filter((d)=>Object.values(d).includes('Animalia'));
 
         // Turn the array into a hierarchy
         dataByTaxonomy = d3.group(data,
