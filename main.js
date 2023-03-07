@@ -1,10 +1,4 @@
-// TODO. Expand all option. Instead of a expand all button, it is better to add an Expand all descendants from a certain node option.
-// TODO. create a minimap to allow navigation asuming that the dendrogram becomes really big
-// TODO. Highlight the path of descendants of a node when hovering and a text prompt of the descendants on top of the dendrogram 
-// TODO. allow filtering to show filtered dendrograms
-/* TODO. FIX BUGS
-*       BUG 1: If expanding while it is contracting, the names do not appear (click on a node fast twice (but not double click))
-*/
+// TODO. Add checkboxes for the filtering
 
 // Set the dimensions and margins of the diagram
 var margin = {top: 20, right: 90, bottom: 30, left: 90},
@@ -27,6 +21,12 @@ collapseAllBtn.addEventListener("click", ()=> {
     }
 });
 
+// Set the filters
+let checkboxes = document.getElementById('filtering').getElementsByTagName('input'); // Get the checkboxes
+for(ch of checkboxes) { // Add a callback for each time a checkbox is changed
+    ch.addEventListener('change', (e)=>checkboxCallback(e.target.parentElement.textContent));
+}
+
 // TWEAKABLES ----------------------------------------
 // const dataPath = "./data/CleanData_Boyaca.csv";
 const dataPath = "./data/CleanData_Boyaca.csv";
@@ -34,6 +34,7 @@ var rawData, data;
 var i = 0,
     duration = 750;
     r_1 = 12, r_2 = 10;
+let showing = [];   // Array that stores the elements that are being shown. Directly related to the checkboxes
 const fontSize = d3.scaleLinear();
 // GENERIC -------------------------------------------
 var treemap = d3.tree()
@@ -67,11 +68,8 @@ const main = async()=> {
     if (dataPath.includes("csv")) {
         rawData = await d3.csv(dataPath);
 
-        // FILTER: Only get that data which has 'Animalia'
-        data = rawData.filter((d)=>Object.values(d).includes('Animalia'));
-
         // Turn the array into a hierarchy
-        dataByTaxonomy = d3.group(data,
+        dataByTaxonomy = d3.group(rawData,
                                 d=>d.kingdom, 
                                 d=>d.phylum, 
                                 d=>d.class, 
@@ -84,8 +82,9 @@ const main = async()=> {
         root = d3.hierarchy(data, (d)=>d.children);     // Assigns parent, children, height, depth
     }
     console.log(root);
-    root.x0 = height / 2;
+    root.x0 = 0;
     root.y0 = 0;
+    console.log(root.y0);
     root.children.forEach(collapse) // Collapse after the second level
 
     // TODO: DATA PROCESSING
@@ -265,6 +264,34 @@ function expandAll(r) { // We suppose r has r._children and no r.children
         r._children = null;
         r.children.forEach((e)=>expandAll(e));
     }
+}
+
+function checkboxCallback(filter) { // Event listener function for the checkbox change events
+    let i = showing.indexOf(filter)
+    if (i > -1) showing.splice(i, 1); // This means it was being shown, therefore do not show 
+    else showing.push(filter);
+
+    // Recalculate the data to show
+    if (showing.length!==0) {
+        data = rawData.filter((d)=>{
+        return showing.some((e)=>Object.values(d).includes(e));   // If the data contains any of the elements in 'showing', it has to be shown, return true
+    });
+    } else {
+        data = rawData;
+    }
+    // Turn the array into a hierarchy
+    dataByTaxonomy = d3.group(data,
+        d=>d.kingdom, 
+        d=>d.phylum, 
+        d=>d.class, 
+        d=>d.order, 
+        d=>d.family, 
+        d=>d.genus); 
+    root = d3.hierarchy(dataByTaxonomy);
+    root.children.forEach(collapse) // Collapse after the second level
+    root.x0 = 0;
+    root.y0 = 0;
+    update(root);
 }
 
 main();
