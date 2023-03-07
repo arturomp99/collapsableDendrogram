@@ -21,7 +21,7 @@ collapseAllBtn.addEventListener("click", ()=> {
 
 // TWEAKABLES ----------------------------------------
 // const dataPath = "./data/CleanData_Boyaca.csv";
-const dataPath = "./data/data_2.json";
+const dataPath = "./data/CleanData_Boyaca.csv";
 var i = 0,
     duration = 750;
     r_1 = 12, r_2 = 10;
